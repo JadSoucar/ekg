@@ -31,7 +31,6 @@ def gen_im(name):
         ax[ix].set_yticks([])
         ax[ix].grid(True)
     plt.savefig(f'static/{name}.png')
-    plt.close()
 
 
 @app.route('/')
@@ -58,3 +57,9 @@ def home(index=0):
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+
+
+#Thing to Fix
+#make a temp file in static for the images
+#allow it to produce several images in advance

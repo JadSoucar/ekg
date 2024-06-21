@@ -16,15 +16,24 @@
             background-color: #f4f4f9;
             color: #333;
         }
-        .navigation {
-            position: absolute;
-            top: 10px;
+        .container {
             display: flex;
-            justify-content: center;
-            width: 100%;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .navigation {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
+        .navigation a {
+            text-decoration: none;
+            margin-bottom: 10px;
         }
         .navigation button {
-            margin: 0 10px;
             padding: 10px 20px;
             font-size: 16px;
             background-color: #007BFF;
@@ -37,20 +46,12 @@
         .navigation button:hover {
             background-color: #0056b3;
         }
-        .container {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
         .container img {
             margin-right: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .container .button-container {
+        .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -82,12 +83,12 @@
     </style>
 </head>
 <body>
-    <div class="navigation">
-        <a href="{{ url_for('home', index=previous_index) }}"><button>Previous</button></a>
-        <a href="{{ url_for('home', index=next_index) }}"><button>Next</button></a>
-    </div>
     <div class="container">
-        <img src="{{ url_for('static', filename=image_path) }}" alt="EKG Image" width="1200">
+        <div class="navigation">
+            <a href="{{ url_for('home', index=next_index) }}"><button>Next</button></a>
+            <a href="{{ url_for('home', index=previous_index) }}"><button>Previous</button></a>
+        </div>
+        <img src="{{ url_for('static', filename=image_path) }}" alt="EKG Image" width="1000">
         <div class="button-container">
             <button onclick="revealDescription()">Answer</button>
             <p id="description" class="description">{{ description }}</p>
