@@ -33,9 +33,6 @@ def gen_im(name):
     plt.savefig(f'static/{name}.png')
     plt.close()
 
-    # Clear variables to free up memory
-    del raw_im, fig, ax
-    gc.collect()
 
 @app.route('/')
 @app.route('/<int:index>')
