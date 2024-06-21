@@ -1,11 +1,13 @@
 import os
 import re
 import gc
+import io
 import numpy as np
 import pandas as pd
 import scipy.io
 import matplotlib.pyplot as plt
-from flask import Flask, render_template, url_for
+plt.switch_backend('agg')
+from flask import Flask, render_template, url_for, send_file
 
 app = Flask(__name__)
 
@@ -23,23 +25,24 @@ def clear_images():
 
 def gen_im(name):
     raw_im = np.load(f'static/{name}.npy')
-    fig,ax = plt.subplots(12,1, figsize=(30,30))
-    for ix,lead in enumerate(raw_im):
-        ax[ix].plot(times,lead)
+    fig, ax = plt.subplots(12, 1, figsize=(30, 30))
+    for ix, lead in enumerate(raw_im):
+        ax[ix].plot(times, lead)
         ax[ix].set_ylabel(labels[ix])
         ax[ix].set_xticks(xticks)
         ax[ix].set_yticks([])
         ax[ix].grid(True)
-    plt.savefig(f'static/{name}.png')
+
+    img = io.BytesIO()
+    fig.savefig(img, format='png')
+    img.seek(0)
+    return img
 
 
 @app.route('/')
 @app.route('/<int:index>')
 def home(index=0):
-    #clear all images
-    clear_images()
-
-    #set index
+    # Set index
     if index >= len(data):
         index = 0  # Restart from the first image if out of bounds
     elif index < 0:
@@ -47,12 +50,18 @@ def home(index=0):
     next_index = (index + 1) % len(data)
     previous_index = (index - 1) % len(data)
 
-    #create image
+    # Get name and description
     name, description = data.iloc[index]['name'], data.iloc[index]['Dx']
-    gen_im(name)
-    image_path = f'{name}.png'
     
-    return render_template('main.html', image_path=image_path, description=description, next_index=next_index, previous_index=previous_index)
+    # Pass the index to the template
+    return render_template('main.html', index=index, description=description, next_index=next_index, previous_index=previous_index)
+
+@app.route('/plot_image/<int:index>')
+def plot_image(index):
+    name = data.iloc[index]['name']
+    img = gen_im(name)
+    return send_file(img, mimetype='image/png')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
